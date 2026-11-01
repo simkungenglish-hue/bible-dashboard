@@ -1,6 +1,6 @@
 {
- "name": "말씀 대시보드",
- "short_name": "말씀",
+ "name": "말씀ON",
+ "short_name": "말씀ON",
  "start_url": "./",
  "display": "standalone",
  "background_color": "#f5f4ef",

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>말씀 대시보드 · 개역개정 · 쉬운성경 · BSB</title>
+<title>말씀ON · 개역개정 · 쉬운성경 · BSB</title>
 <link rel="manifest" href="manifest.json">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#2f6f5e">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="말씀">
+<meta name="apple-mobile-web-app-title" content="말씀ON">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -481,7 +481,7 @@ function hlBg(arr){return arr.map(k=>{const h=HLC.find(x=>x.k===k);return h?`lin
 let VIEW='home',viewArg=null,SEL=new Set();
 const NAV=[['home','홈','home'],['read','성경','book'],['search','검색','search'],['plan','통독','calendar'],['my','MY','user'],['notes','노트·기록','note'],['memo','메모장','pen'],['rec','통독 녹음','mic'],['media','말씀·찬양','music'],['settings','설정','sliders']];
 function renderNav(){
-  $('#side').innerHTML=`<div class="brand"><div class="logo">${ic('book')}</div><div><b>말씀 대시보드</b><small>개역개정 · 쉬운성경 · BSB</small></div></div>`+NAV.map(([k,l,i])=>`<button class="nav-btn ${VIEW===k?'on':''}" data-nav="${k}">${ic(i)}${l}</button>`).join('')+`<div class="side-foot">단축키<br>← → 이전/다음 장<br>/ 검색 · Esc 선택해제<br><br>기록은 이 브라우저에 자동 저장돼요.</div>`;
+  $('#side').innerHTML=`<div class="brand"><div class="logo">${ic('book')}</div><div><b>말씀ON</b><small>개역개정 · 쉬운성경 · BSB</small></div></div>`+NAV.map(([k,l,i])=>`<button class="nav-btn ${VIEW===k?'on':''}" data-nav="${k}">${ic(i)}${l}</button>`).join('')+`<div class="side-foot">단축키<br>← → 이전/다음 장<br>/ 검색 · Esc 선택해제<br><br>기록은 이 브라우저에 자동 저장돼요.</div>`;
   $('#tabbar').innerHTML=NAV.filter(n=>n[0]!=='notes').map(([k,l,i])=>`<button class="${VIEW===k?'on':''}" data-nav="${k}">${ic(i)}${l}</button>`).join('');
 }
 document.addEventListener('click',e=>{const n=e.target.closest('[data-nav]');if(n){if(n.dataset.nav==='read')planCtx=null;if(n.dataset.nav==='memo')MM.edit=false;if(n.dataset.nav==='plan')PV.tab='plan';go(n.dataset.nav)}});
@@ -1086,7 +1086,7 @@ function vPlanHub(el){el.innerHTML=`<div class="wrap" style="margin-bottom:14px"
 const MSEED=JSON.parse(document.getElementById('media-seed').textContent||'[]');
 const MV={cat:'word',folder:null,q:'',playing:null,adding:false,meta:null,sq:'',sres:null,snext:null,serr:'',sloading:false,temp:null,lastFolder:''};
 const MCAT={word:'말씀',praise:'찬양'};
-function mediaAll(){const hide=new Set(S.mediaHide||[]);return [...(S.media||[]).slice().sort((a,b)=>b.ts-a.ts),...MSEED.filter(x=>!hide.has(x.id)).map(x=>({...x,type:'yt',seed:true}))]}
+function mediaAll(){const hide=new Set(S.mediaHide||[]);return [...(S.media||[]).slice().sort((a,b)=>b.ts-a.ts),...MSEED.filter(x=>x.cat!=='word'&&!hide.has(x.id)).map(x=>({...x,type:'yt',seed:true}))]}
 function parseLink(u){u=(u||'').trim();if(!u)return null;if(!/^https?:\/\//i.test(u))u='https://'+u;let url;try{url=new URL(u)}catch(e){return null}
   const h=url.hostname.replace(/^(www|m|music)\./,'');
   if(/(^|\.)youtube\.com$|^youtu\.be$|youtube-nocookie\.com$/.test(h)){let vid=null;const list=url.searchParams.get('list');
@@ -1113,7 +1113,7 @@ function vMedia(el){const all=mediaAll(),inCat=all.filter(m=>m.cat===MV.cat);
   const cur=MV.playing?(String(MV.playing).startsWith('yt:')?MV.temp:all.find(m=>m.id===MV.playing)):null;const allFolders=[...new Set(all.map(m=>m.folder).filter(Boolean))];
   el.innerHTML=`<div class="wrap"><div class="row" style="margin-bottom:14px"><h2 class="pg" style="margin:0">${ic('music')}말씀·찬양</h2><span class="muted small">자주 듣는 말씀 영상과 찬양</span><span class="grow"></span><button class="btn pri" id="mAddBtn">${ic('plus')}영상 추가</button></div>
    <div class="card ysearch" style="margin-bottom:16px"><form id="ysForm" class="row" style="flex-wrap:nowrap"><input id="ysQ" placeholder="유튜브에서 찾기: 목사님 이름, 찬양 제목, 가사 한 줄" value="${esc(MV.sq||'')}" style="flex:1;min-width:0" enterkeyhint="search"><button class="btn pri" type="submit">${ic('search')}검색</button></form>
-    <div class="row" style="margin-top:8px;gap:6px">${['김병삼 목사 설교','매일만나 하나님의 손길','힐송 찬양','마커스워십','어노인팅','찬송가 연속 듣기'].map(s=>`<button class="chip" data-ysq="${s}">${s}</button>`).join('')}</div>
+    <div class="row" style="margin-top:8px;gap:6px">${['주일 설교','새벽기도 말씀','찬송가 연속 듣기','힐송 찬양','마커스워십','어노인팅'].map(s=>`<button class="chip" data-ysq="${s}">${s}</button>`).join('')}</div>
     ${(MV.sloading||MV.serr||(MV.sres&&MV.sres.length))?`<div style="margin-top:14px"><div class="row" style="margin-bottom:10px"><b>'${esc(MV.sq)}' 유튜브 검색 결과</b><span class="grow"></span><button class="btn sm ghost" id="ysClose">${ic('x')}검색 닫기</button></div>${MV.serr?`<div class="empty">${esc(MV.serr)}</div>`:''}<div class="mgrid" id="ysGrid">${(MV.sres||[]).map(yCardHTML).join('')}</div>${MV.sloading?'<div class="empty">찾는 중...</div>':''}${MV.snext&&!MV.sloading?'<div style="text-align:center;margin-top:12px"><button class="btn" id="ysMore">더 보기</button></div>':''}</div>`:''}</div>
    <div class="card" id="mAddCard" style="margin-bottom:16px;${MV.adding?'':'display:none'}"><h3>${ic('link')}링크로 영상 등록</h3>
     <div class="row" style="flex-wrap:nowrap"><input id="maUrl" placeholder="유튜브 링크나 다른 영상 링크를 붙여 넣으세요" style="flex:1;min-width:0;font-size:16px"></div>
@@ -1203,9 +1203,10 @@ async function cloudPull(first){if(!CL.user)return;const meta=syncMeta();
   cloudBadge()}
 async function cloudAfterLogin(user){CL.user=user;const m=syncMeta();if(m.uid===user.id)CL.rev=m.rev||0;if(VIEW==='auth')VIEW='home';render();
   try{const {data:isM,error}=await CL.sb.rpc('is_bible_member');if(error)throw error;
-    if(!isM){await CL.sb.auth.signOut();CL.user=null;AUTH.msg='이 계정은 아직 말씀 대시보드 회원이 아니에요. [처음 가입]에서 초대 코드로 가입해 주세요.';VIEW='auth';render();return}
+    if(!isM){await CL.sb.auth.signOut();CL.user=null;AUTH.msg='이 계정은 아직 말씀ON 회원이 아니에요. [처음 가입]에서 초대 코드로 가입해 주세요.';VIEW='auth';render();return}
     const {data:mem}=await CL.sb.from('bible_members').select('name,nick,is_admin').eq('user_id',user.id).maybeSingle();CL.member=mem||null;
-    await cloudPull(true)}
+    await cloudPull(true);
+    if(CL.member&&CL.member.is_admin&&!S.wordSeeds){const have=new Set((S.media||[]).map(m=>m.vid));S.media=S.media||[];let t0=Date.now()-MSEED.length*1000;MSEED.filter(x=>x.cat==='word'&&!have.has(x.vid)).reverse().forEach(x=>S.media.push({id:'u'+x.vid,type:'yt',vid:x.vid,url:'https://www.youtube.com/watch?v='+x.vid,title:x.title,thumb:'',cat:'word',folder:x.folder,ch:x.ch||'',ts:t0++}));S.wordSeeds=1;save();softRender()}}
   catch(e){CL.status='offline';cloudBadge()}}
 async function cloudBoot(){if(!CL.sb){render();return}let sess=null;try{const {data}=await CL.sb.auth.getSession();sess=data&&data.session}catch(e){}
   if(!sess){VIEW='auth';render();return}await cloudAfterLogin(sess.user);
@@ -1224,7 +1225,7 @@ function openNewPwModal(){const box=modal(`<div class="mhead"><h3>${ic('user')}�
     const {error}=await CL.sb.auth.updateUser({password:a});if(error){m.textContent='바꾸지 못했어요. 메일의 버튼을 다시 눌러 주세요.';return}closeModal();toast('새 비밀번호로 바꿨어요')}}
 function vAuth(el){const j=AUTH.mode==='join';
   el.innerHTML=`<div class="authwrap"><div class="authcard card">
-    <div class="brand" style="justify-content:center;padding-bottom:10px"><div class="logo">${ic('book')}</div><div><b>말씀 대시보드</b><small>개역개정 · 쉬운성경 · BSB</small></div></div>
+    <div class="brand" style="justify-content:center;padding-bottom:10px"><div class="logo">${ic('book')}</div><div><b>말씀ON</b><small>개역개정 · 쉬운성경 · BSB</small></div></div>
     <div class="seg" style="display:flex;width:100%;margin:6px 0 4px"><button data-am="login" class="${!j?'on':''}" style="flex:1">로그인</button><button data-am="join" class="${j?'on':''}" style="flex:1">처음 가입</button></div>
     <form id="authForm" autocomplete="on">
      ${j?`<label for="auNick">닉네임</label><input id="auNick" required minlength="2" maxlength="10" autocomplete="nickname" placeholder="2~10글자 (예: 은혜맘)">
@@ -1281,7 +1282,7 @@ function bindAcct(el){const gl=$('#goLogin');if(gl)gl.onclick=()=>{VIEW='auth';r
   $('#acSync').onclick=async()=>{try{if(syncMeta().dirty)await cloudPush();await cloudPull(false);toast('동기화했어요')}catch(e){toast('인터넷 연결을 확인해 주세요')}cloudBadge()};
   $('#acLogout').onclick=cloudLogout;$('#acSnaps').onclick=openSnapshots;
   if(CL.member&&CL.member.is_admin)loadAdmin()}
-async function loadAdmin(){const lc=$('#adLinkCopy');if(lc)lc.onclick=()=>copyText(`말씀 대시보드에 초대합니다. 아래 주소를 열고 [처음 가입]에서 닉네임·이메일·비밀번호만 정하면 돼요.\n${APP_URL}`);
+async function loadAdmin(){const lc=$('#adLinkCopy');if(lc)lc.onclick=()=>copyText(`말씀ON에 초대합니다. 아래 주소를 열고 [처음 가입]에서 닉네임·이메일·비밀번호만 정하면 돼요.\n${APP_URL}`);
   try{const {data:list,error}=await CL.sb.rpc('bible_admin_members');if(error)throw error;const box=$('#adMembers');if(!box)return;
   box.innerHTML=`<div class="glabel">가입한 분 ${list.length}명</div>`+list.map(m=>`<div class="list-item" style="align-items:center;flex-wrap:wrap"><span class="txt"><b>${esc(m.nick||'')}</b>${m.is_admin?' <span class="chip on" style="cursor:default;padding:1px 8px">나</span>':''}<small>가입 ${new Date(m.joined_at).toLocaleDateString('ko-KR')} · 최근 접속 ${m.last_sign_in?new Date(m.last_sign_in).toLocaleDateString('ko-KR'):'-'}</small></span>${m.is_admin?'':`<button class="btn sm danger" data-adrm="${m.user_id}" data-nm="${esc(m.nick)}" title="모르는 사람이 가입했을 때만 삭제">${ic('trash')}</button>`}</div>`).join('');
   box.querySelectorAll('[data-adrm]').forEach(x=>x.onclick=async()=>{if(!confirm(x.dataset.nm+'님 계정을 삭제할까요? 그분의 온라인 기록도 모두 지워져요.'))return;const {error}=await CL.sb.rpc('bible_admin_remove',{p_user:x.dataset.adrm});toast(error?'삭제하지 못했어요':'삭제했어요');loadAdmin()})}
@@ -1369,7 +1370,7 @@ function vSettings(el){const st=S.settings;
   $('#ssp').oninput=e=>{st.scrollSpeed=+e.target.value;$('#sspv').textContent=e.target.value;save()};
   $('#tan').onclick=e=>{st.autoNext=!st.autoNext;e.target.classList.toggle('on',st.autoNext);save()};
   $('#myName').oninput=e=>{S.name=e.target.value.trim();save()};
-  $('#bk').onclick=()=>download(`말씀대시보드_백업_${dstr()}.json`,JSON.stringify(S,null,1));
+  $('#bk').onclick=()=>download(`말씀ON_백업_${dstr()}.json`,JSON.stringify(S,null,1));
   $('#ntxt2').onclick=exportNotesTxt;$('#mtxt2').onclick=exportMemosTxt;
   $('#rs').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||typeof d!=='object'||!('settings' in d))throw 0;if(!confirm('백업 파일로 현재 기록을 덮어쓸까요?'))return;localStorage.setItem(KEY,JSON.stringify(d));loadState();save();toast('복원했어요');render()}catch(err){toast('올바른 백업 파일이 아니에요')}};r.readAsText(f)};
   $('#rst').onclick=()=>{if(confirm('노트, 형광펜, 북마크, 읽기표, 통독, 감사 기록이 모두 지워져요. 계속할까요?')&&confirm('정말 초기화할까요? 되돌릴 수 없어요.')){const old=S;if(CL.user){CL.sb.rpc('bible_keep_copy',{p_data:old,p_kind:'before-reset'}).then(()=>{},()=>{})}localStorage.removeItem(KEY);loadState();save();toast('초기화했어요');render()}};}
